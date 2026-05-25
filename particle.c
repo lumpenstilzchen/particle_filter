@@ -20,12 +20,12 @@ void init_particles(Particle* particles, int N) {
 
 void predict(Particle* particles, int N, double Q) {
     for (int i = 0; i < N; i++)
-        particles[i].position = gaussian(0.0, sqrt(Q));
+        particles[i].position += gaussian(0.0, sqrt(Q));
 }
 
 void update_weights(Particle* particles, int N, double z, double R) {
     for (int i = 0; i < N; i++)
-        particles[i].weights *= exp(-pow(z - particles[i].position, 2) / (2.0, R));
+        particles[i].weights *= exp(-pow(z - particles[i].position, 2) / (2.0 * R));
 }
 
 void normalize_weights(Particle* particles, int N) {
@@ -34,4 +34,34 @@ void normalize_weights(Particle* particles, int N) {
         sum += particles[i].weights;
     for (int i = 0; i < N; i++)
         particles[i].weights /= sum;
+}
+
+void resample(Particle* particles, int N) {
+    Particle temp[N]; 
+    
+    double cumsum[N];
+    cumsum[0] = particles[0].weights;
+    for (int i = 1; i < N; i++)
+        cumsum[i] = cumsum[i-1] + particles[i].weights;
+    
+    double step = 1.0 / N;
+    double start = ((double)rand() / RAND_MAX) * step;
+    
+    int j = 0;
+    for (int i = 0; i < N; i++) {
+        double pos = start + i * step;
+        while (pos > cumsum[j]) j++;
+        temp[i] = particles[j];
+        temp[i].weights = 1.0 / N;
+    }
+    
+    for (int i = 0; i < N; i++)
+        particles[i] = temp[i];
+}
+
+double estimate_position(Particle* particles, int N) {
+    double estimate = 0;
+    for (int i = 0; i < N; i++)
+        estimate += particles[i].position * particles[i].weights;
+    return estimate; 
 }
