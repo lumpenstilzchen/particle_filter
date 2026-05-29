@@ -23,7 +23,7 @@ particle_filter/program/
 ### Требования
 - GCC
 - Make
-- Python 3 с библиотеками `pandas` и `matplotlib`
+- Python с библиотеками `pandas` и `matplotlib`
 
 ### Установка библиотек Python
 ```bash
@@ -33,6 +33,9 @@ pip install pandas matplotlib
 ### Команды
 
 ```bash
+git clone https://github.com/lumpenstilzchen/particle_filter
+cd particle_filter/program
+
 # только сборка
 make
 
